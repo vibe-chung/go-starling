@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -39,7 +39,7 @@ var listAccountsCmd = &cobra.Command{
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Println("Error reading response:", err)
 			os.Exit(1)
@@ -98,7 +98,7 @@ var listTransactionsCmd = &cobra.Command{
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Println("Error reading response:", err)
 			os.Exit(1)
@@ -152,11 +152,11 @@ var loginCmd = &cobra.Command{
 func main() {
 	// Default to 30 days ago for changesSince parameter
 	defaultChangesSince := time.Now().UTC().AddDate(0, 0, -30).Format(time.RFC3339)
-	
+
 	listTransactionsCmd.Flags().String("account-uid", "", "Account UID (required)")
 	listTransactionsCmd.Flags().String("category-uid", "", "Category UID (required)")
 	listTransactionsCmd.Flags().String("changes-since", defaultChangesSince, "Timestamp to get transactions since (RFC3339 format)")
-	
+
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(listAccountsCmd)
 	rootCmd.AddCommand(listTransactionsCmd)
